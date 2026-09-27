@@ -1,0 +1,58 @@
+body {
+    background: linear-gradient(to bottom, #1a2a6c, #b21f1f, #fdbb2d);
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    text-align: center;
+    color: white;
+    margin: 0;
+    padding: 20px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.game-container {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    backdrop-filter: blur(4px);
+    max-width: 400px;
+    width: 100%;
+}
+
+h1 {
+    font-size: 24px;
+    color: #ffeb3b;
+    text-shadow: 2px 2px #ff5722;
+}
+
+#score-board {
+    font-size: 20px;
+    margin: 20px 0;
+}
+
+#spawn-btn {
+    background-color: #ffeb3b;
+    color: #d32f2f;
+    border: none;
+    padding: 15px 30px;
+    font-size: 22px;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 5px #f57f17;
+    transition: 0.1s;
+}
+
+#spawn-btn:active {
+    transform: translateY(4px);
+    box-shadow: 0 1px #f57f17;
+}
+
+#message {
+    margin-top: 20px;
+    font-size: 16px;
+    font-style: italic;
+}
