@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aplikasi Mewarnai - Fix Drawing</title>
+    <title>Studio Mewarnai Kreatif - Lengkap</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -15,7 +15,7 @@
             align-items: center;
             min-height: 100vh;
             color: #2c3e50;
-            touch-action: none; /* Mencegah layar ikut geser saat menggambar */
+            touch-action: none;
         }
 
         h1 {
@@ -50,10 +50,37 @@
             cursor: crosshair;
         }
 
+        .control-group {
+            width: 100%;
+            margin-top: 10px;
+            background: #f8f9fa;
+            padding: 8px;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        .control-group label {
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .control-row {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        input[type="range"] {
+            flex: 1;
+        }
+
         .toolbar {
             display: flex;
-            gap: 8px;
-            margin-top: 10px;
+            gap: 6px;
+            margin-top: 8px;
             flex-wrap: wrap;
             justify-content: center;
             width: 100%;
@@ -63,11 +90,11 @@
             background-color: #30afff;
             color: white;
             border: none;
-            padding: 8px 12px;
+            padding: 7px 10px;
             border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
 
         button.active {
@@ -79,11 +106,12 @@
             gap: 6px;
             margin-top: 8px;
             justify-content: center;
+            flex-wrap: wrap;
         }
 
         .color-swatch {
-            width: 28px;
-            height: 28px;
+            width: 26px;
+            height: 26px;
             border-radius: 50%;
             border: 2px solid white;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
@@ -116,12 +144,28 @@
             <div class="color-swatch" style="background-color: #2d3436;" data-color="#2d3436"></div>
         </div>
 
-        <!-- Tombol Kontrol -->
+        <!-- Pengatur Ukuran Pensil/Kuas -->
+        <div class="control-group">
+            <div class="control-row">
+                <label>Ukuran Pensil/Kuas: <span id="brushSizeVal">6</span>px</label>
+            </div>
+            <input type="range" id="brushSizeRange" min="1" max="30" value="6" oninput="updateBrushSize(this.value)">
+        </div>
+
+        <!-- Pengatur Ukuran Penghapus -->
+        <div class="control-group">
+            <div class="control-row">
+                <label>Ukuran Penghapus: <span id="eraserSizeVal">15</span>px</label>
+            </div>
+            <input type="range" id="eraserSizeRange" min="5" max="50" value="15" oninput="updateEraserSize(this.value)">
+        </div>
+
+        <!-- Tombol Kontrol Alat & Aksi -->
         <div class="toolbar">
-            <button id="brushBtn" class="active" onclick="setTool('brush')">Kuas</button>
-            <button id="eraserBtn" onclick="setTool('eraser')">Penghapus</button>
-            <button onclick="clearCanvas()">Reset</button>
-            <button onclick="saveImage()" style="background-color: #2ecc71;">Simpan</button>
+            <button id="brushBtn" class="active" onclick="setTool('brush')">✏️ Kuas</button>
+            <button id="eraserBtn" onclick="setTool('eraser')">🧹 Penghapus</button>
+            <button onclick="clearCanvas()">🔄 Reset</button>
+            <button onclick="saveImage()" style="background-color: #2ecc71;">💾 Simpan</button>
         </div>
     </div>
 
@@ -133,6 +177,7 @@
         let currentTool = 'brush';
         let currentColor = '#30afff';
         let brushSize = 6;
+        let eraserSize = 15;
 
         function initCanvas() {
             ctx.fillStyle = '#ffffff';
@@ -141,7 +186,6 @@
         }
 
         function drawTemplate() {
-            // Garis contoh gambar sederhana (Bunga)
             ctx.strokeStyle = '#2d3436';
             ctx.lineWidth = 3;
             ctx.beginPath();
@@ -162,6 +206,16 @@
             document.getElementById('eraserBtn').classList.toggle('active', tool === 'eraser');
         }
 
+        function updateBrushSize(val) {
+            brushSize = parseInt(val);
+            document.getElementById('brushSizeVal').innerText = val;
+        }
+
+        function updateEraserSize(val) {
+            eraserSize = parseInt(val);
+            document.getElementById('eraserSizeVal').innerText = val;
+        }
+
         // Pilihan Warna
         const swatches = document.querySelectorAll('.color-swatch');
         swatches.forEach(swatch => {
@@ -173,7 +227,6 @@
             });
         });
 
-        // Fungsi Posisi Koordinat yang Akurat untuk Mouse & Touch
         function getPos(e) {
             const rect = canvas.getBoundingClientRect();
             let clientX, clientY;
@@ -212,14 +265,15 @@
 
             const pos = getPos(e);
 
-            ctx.lineWidth = brushSize;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
 
             if (currentTool === 'brush') {
+                ctx.lineWidth = brushSize;
                 ctx.strokeStyle = currentColor;
             } else {
-                ctx.strokeStyle = '#ffffff'; // Penghapus
+                ctx.lineWidth = eraserSize;
+                ctx.strokeStyle = '#ffffff'; // Warna putih untuk menghapus
             }
 
             ctx.lineTo(pos.x, pos.y);
@@ -228,12 +282,11 @@
             ctx.moveTo(pos.x, pos.y);
         }
 
-        // Event Listeners Mouse
+        // Event Listeners
         canvas.addEventListener('mousedown', startPosition);
         canvas.addEventListener('mouseup', endPosition);
         canvas.addEventListener('mousemove', draw);
 
-        // Event Listeners Touch (HP / Tablet)
         canvas.addEventListener('touchstart', startPosition, { passive: false });
         canvas.addEventListener('touchend', endPosition, { passive: false });
         canvas.addEventListener('touchmove', draw, { passive: false });
